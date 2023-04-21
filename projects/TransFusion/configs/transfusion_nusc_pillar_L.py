@@ -93,8 +93,9 @@ train_pipeline = [
     dict(type="ObjectRangeFilter", point_cloud_range=point_cloud_range),
     dict(type="ObjectNameFilter", classes=class_names),
     dict(type="PointShuffle"),
-    dict(type="DefaultFormatBundle3D", class_names=class_names),
-    dict(type="Collect3D", keys=["points", "gt_bboxes_3d", "gt_labels_3d"]),
+    dict(
+        type='Pack3DDetInputs',
+        keys=['points', 'gt_bboxes_3d', 'gt_labels_3d'])
 ]
 test_pipeline = [
     dict(
@@ -121,10 +122,9 @@ test_pipeline = [
                 translation_std=[0, 0, 0],
             ),
             dict(type="RandomFlip3D"),
-            dict(type="DefaultFormatBundle3D", class_names=class_names, with_label=False),
-            dict(type="Collect3D", keys=["points"]),
         ],
     ),
+    dict(type='Pack3DDetInputs', keys=['points'])
 ]
 train_dataloader = dict(
     batch_size=2,
